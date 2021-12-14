@@ -50,6 +50,15 @@ inputs:
     description: 'GCP JSON KEY'
     required: true
 
+  cluster_name: 
+    description: 'GCP cluster Name'
+    required: true
+    default: 'knawat'
+  cluster_location:
+    description: 'GCP cluster location'
+    required: true
+    default: 'knawat'
+  
   SERVICES:
     description: 'The name of the moleculer services you want to deploy'
     required: false
