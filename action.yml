@@ -54,8 +54,12 @@ inputs:
     description: 'GCP JSON KEY'
     required: true
 
-if: ${{ inputs.BASE_URL == "deploy" && inputs.SERVICES =~ "API" }}
+  SERVICES:
+    description: 'The name of the moleculer services you want to deploy'
+    required: false
+    default: 'API, test'
 
+if: ${{ inputs.BASE_URL == "deploy" && inputs.SERVICES =~ "API" }}
 runs:
   using: "composite"
   steps:
