@@ -83,7 +83,7 @@ runs:
       uses: mr-smithers-excellent/docker-build-push@v5
       with:
         image: ${{ inputs.GCP_PROJECT }}/${{ inputs.IMAGE_REPO_NAME }}
-        tags: ${{ inputs.GITHUB_SHA	}}
+        tags: ${{ inputs.IMAGE_TAGS	}}
         registry: ${{ inputs.docker-registry }}
         username: _json_key
         password:  ${{ inputs.GCP_JSON_KEY }}
