@@ -7,13 +7,6 @@ inputs:
     default: 'deploy'
     description: "Command to run"
     type: string
-   
-  token:
-    description: "Your Github token"
-    default: 'test'
-    required: false
-    type: string
-
   BASE_URL:
     description: "Your base URL for your deployment"
     default: 'x.knawat.com'
