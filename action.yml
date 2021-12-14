@@ -85,7 +85,7 @@ runs:
       shell: bash
       run: |
         gcloud compute addresses create $(echo $GITHUB_HEAD_REF | tr '[:upper:]' '[:lower:]' | cut -f2 -d/)-${{github.event.number}}-pr --global --ip-version IPV4
-        echo "::set-output name=STATIC_IP_ADDRESS::$(gcloud compute addresses list --format json --filter "name=$(echo $GITHUB_HEAD_REF | cut -f2 -d/)-${{github.event.issue.number}}-pr" --format="get(address)")"
+        echo "::set-output name=STATIC_IP_ADDRESS::$(gcloud compute addresses list --format json --filter "name=$(echo $GITHUB_HEAD_REF | tr '[:upper:]' '[:lower:]' | cut -f2 -d/)-${{github.event.number}}-pr" --format="get(address)")"
        
     - id: create-dns
       shell: bash
