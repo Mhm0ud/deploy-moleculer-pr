@@ -2,7 +2,7 @@ name: 'Preview Pull Requests in Google Kubernetes Service'
 description: 'A Github Action to deploy moleculer app preview of Pull Requests to GKE - Google Kubernetes Engine using Moleculer Helm charts 🚀'
 author: 'Mahmoud Almasri'
 inputs:
- command:
+  command:
     required: true
     default: 'deploy'
     description: "Command to run"
