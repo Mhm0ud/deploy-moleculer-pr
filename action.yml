@@ -6,21 +6,19 @@ inputs:
     required: true
     default: 'deploy'
     description: "Command to run"
-    type: choice
-    options:
-        - deploy
-        - delete
-        - debug
+    type: string
+   
   token:
     description: "Your Github token"
-    default: "test"
+    default: 'test'
     required: false
     type: string
 
   BASE_URL:
     description: "Your base URL for your deployment"
-    default: x.knawat.com
+    default: 'x.knawat.com'
     required: false
+    type: string
   DNS_ZONE_NAME:
     description: "Your DNS Zone Name in GCP Cloud DNS"
     default: knawat-com
