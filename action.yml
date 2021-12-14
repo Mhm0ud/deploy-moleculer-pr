@@ -73,11 +73,13 @@ runs:
       uses: google-github-actions/setup-gcloud@v0.3.0
 
     - id: create-ip-address
+      shell: bash
       run: |
         gcloud compute addresses create $(echo $GITHUB_HEAD_REF | cut -f2 -d/)-${{github.event.issue.number}}-pr --global --ip-version IPV4
         echo "::set-output name=STATIC_IP_ADDRESS::$(gcloud compute addresses list --format json --filter "name=$(echo $GITHUB_HEAD_REF | cut -f2 -d/)-${{github.event.issue.number}}-pr" --format="get(address)")"
        
     - id: create-dns
+      shell: bash
       run: |
         gcloud dns record-sets create pr-${{github.event.issue.number}}.${{ inputs.BASE_URL }}. --rrdatas=${{steps.create-ip-address.outputs.STATIC_IP_ADDRESS}} --type=A --ttl=60 --zone=${{ inputs.DNS_ZONE_NAME }}
 
