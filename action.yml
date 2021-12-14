@@ -29,7 +29,7 @@ inputs:
     required: false
     default: 'latest'	
     description: "Image tag"
-  IMAGE_NAME:
+  IMAGE_REPO_NAME:
     required: false
     default: knawat
     description: "Image repo name in GCP image registery "
