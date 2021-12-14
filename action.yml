@@ -57,36 +57,7 @@ runs:
       uses: google-github-actions/auth@v0.4.0
       with:
         credentials_json: ${{ inputs.GCR_JSON_KEY }}
-    - id: get-credentials
-      uses: google-github-actions/get-gke-credentials@v0.3.0
-      with:
-        cluster_name: ${{ inputs.cluster_name }}
-        location: ${{ inputs.cluster_location }}
-    - name: Set up Cloud SDK
-      uses: google-github-actions/setup-gcloud@v0.3.0
-    - id: create-ip-address
-      run: |
-        gcloud compute addresses create $(echo $GITHUB_HEAD_REF | cut -f2 -d/)-${{github.event.issue.number}}-pr --global --ip-version IPV4
-        echo "::set-output name=STATIC_IP_ADDRESS::$(gcloud compute addresses list --format json --filter "name=$(echo $GITHUB_HEAD_REF | cut -f2 -d/)-${{github.event.issue.number}}-pr" --format="get(address)")"
-    - id: create-dns
-      run: |
-        gcloud dns record-sets create pr-${{github.event.issue.number}}.${{ inputs.BASE_URL }}. --rrdatas=${{steps.create-ip-address.outputs.STATIC_IP_ADDRESS}} --type=A --ttl=60 --zone=${{ inputs.DNS_ZONE_NAME }}
-    - id: login-docker 
-      name: Login to GCR
-      uses: docker/login-action@v1
-      with:
-        registry: ${{ inputs.docker-registry }}
-        username: _json_key
-        password: ${{ inputs.GCR_JSON_KEY }}
-    - id: docker-build-push
-      uses: mr-smithers-excellent/docker-build-push@v5
-      with:
-        image: ${{ inputs.GCP_PROJECT }}/${{ inputs.IMAGE_REPO_NAME }}
-        tags: ${{ inputs.GITHUB_SHA	}}
-        dockerfile: ${{ inputs.docker-file }}
-        registry: ${{ inputs.docker-registry }}
-        username: _json_key
-        password:  ${{ inputs.GCR_JSON_KEY }}
+
 branding:
   icon: 'check-circle'  
   color: 'orange'
