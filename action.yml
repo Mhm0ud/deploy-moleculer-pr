@@ -64,7 +64,7 @@ inputs:
     required: false
     default: 'API, test'
 
-if: github.event.inputs.command == "deploy"
+if: ${{ inputs.command == "deploy" }}
 runs:
   using: "composite"
   steps:
