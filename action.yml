@@ -55,7 +55,7 @@ inputs:
     required: false
     default: 'API, test'
 
-if: ${{ inputs.BASE_URL == "deploy" && inputs.SERVICES =~ "API" }}
+if: ${{ inputs.command == "deploy" && inputs.SERVICES =~ "API" }}
 runs:
   using: "composite"
   steps:
