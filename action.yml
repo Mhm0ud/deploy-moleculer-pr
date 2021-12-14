@@ -83,16 +83,24 @@ runs:
 
     - id: create-ip-address
       shell: bash
-      continue-on-error: true
       run: |
-        gcloud compute addresses create $(echo $GITHUB_HEAD_REF | tr '[:upper:]' '[:lower:]' | cut -f2 -d/)-${{github.event.number}}-pr --global --ip-version IPV4
-        echo "::set-output name=STATIC_IP_ADDRESS::$(gcloud compute addresses list --format json --filter "name=$(echo $GITHUB_HEAD_REF | tr '[:upper:]' '[:lower:]' | cut -f2 -d/)-${{github.event.number}}-pr" --format="get(address)")"
-       
+        if [[ -z $(gcloud compute addresses list --format json --filter "name=$(echo $GITHUB_HEAD_REF | tr '[:upper:]' '[:lower:]' | cut -f2 -d/)-${{github.event.number}}-pr" --format="get(address)") ]];
+        then
+          gcloud compute addresses create $(echo $GITHUB_HEAD_REF | tr '[:upper:]' '[:lower:]' | cut -f2 -d/)-${{github.event.number}}-pr --global --ip-version IPV4
+          echo "::set-output name=STATIC_IP_ADDRESS::$(gcloud compute addresses list --format json --filter "name=$(echo $GITHUB_HEAD_REF | tr '[:upper:]' '[:lower:]' | cut -f2 -d/)-${{github.event.number}}-pr" --format="get(address)")"
+        else
+          echo "::set-output name=STATIC_IP_ADDRESS::$(gcloud compute addresses list --format json --filter "name=$(echo $GITHUB_HEAD_REF | tr '[:upper:]' '[:lower:]' | cut -f2 -d/)-${{github.event.number}}-pr" --format="get(address)")"
+        fi
+
     - id: create-dns
       shell: bash
-      continue-on-error: true
       run: |
-        gcloud dns record-sets create pr-${{github.event.number}}.${{ inputs.BASE_URL }}. --rrdatas=${{steps.create-ip-address.outputs.STATIC_IP_ADDRESS}} --type=A --ttl=60 --zone=${{ inputs.DNS_ZONE_NAME }}
+        if gcloud dns record-sets create pr-${{github.event.number}}.${{ inputs.BASE_URL }}. --rrdatas=${{steps.create-ip-address.outputs.STATIC_IP_ADDRESS}} --type=A --ttl=60 --zone=${{ inputs.DNS_ZONE_NAME }}
+        then
+          echo "The DNS created"
+        else
+          echo "The DNS is already exist or failed to create."
+        fi
 
     - id: login-docker 
       name: Login to GCR
