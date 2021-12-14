@@ -68,6 +68,7 @@ if: github.event.inputs.command == "deploy"
 runs:
   using: "composite"
   steps:
+    - uses: actions/checkout@v2
     - run: ls -l
       shell: bash
     - id: login-docker 
@@ -95,7 +96,7 @@ runs:
       with:
         cluster_name: ${{ inputs.cluster_name }}
         location: ${{ inputs.cluster_location }}
-        
+
     - name: Set up Cloud SDK
       uses: google-github-actions/setup-gcloud@v0.3.0
 
