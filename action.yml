@@ -6,12 +6,10 @@ inputs:
     required: true
     default: "deploy"
     description: "Command to run"
-
   token:
     description: "Your Github token"
     default: $
     required: false
-
   BASE_URL:
     description: "Your base URL for your deployment"
     default: x.knawat.com
@@ -20,7 +18,6 @@ inputs:
     description: "Your DNS Zone Name in GCP Cloud DNS"
     default: knawat-com
     required: false
-
   docker-file:
     required: false
     default: "Dockerfile"
@@ -37,7 +34,6 @@ inputs:
     required: false
     default: knawat
     description: "Image repo name in GCP image registery "
-
   organization-name: 
     description: 'The name of the organization on Jira'
     required: false
@@ -45,7 +41,6 @@ inputs:
   jira-token:  
     description: 'Jira Token'
     required: false
-
   GCP_PROJECT:
     description: 'GCP Project Name'
     required: true
@@ -67,19 +62,15 @@ runs:
       with:
         cluster_name: ${{ inputs.cluster_name }}
         location: ${{ inputs.cluster_location }}
-
     - name: Set up Cloud SDK
       uses: google-github-actions/setup-gcloud@v0.3.0
-
     - id: create-ip-address
       run: |
         gcloud compute addresses create $(echo $GITHUB_HEAD_REF | cut -f2 -d/)-${{github.event.issue.number}}-pr --global --ip-version IPV4
         echo "::set-output name=STATIC_IP_ADDRESS::$(gcloud compute addresses list --format json --filter "name=$(echo $GITHUB_HEAD_REF | cut -f2 -d/)-${{github.event.issue.number}}-pr" --format="get(address)")"
-       
     - id: create-dns
       run: |
         gcloud dns record-sets create pr-${{github.event.issue.number}}.${{ inputs.BASE_URL }}. --rrdatas=${{steps.create-ip-address.outputs.STATIC_IP_ADDRESS}} --type=A --ttl=60 --zone=${{ inputs.DNS_ZONE_NAME }}
-
     - id: login-docker 
       name: Login to GCR
       uses: docker/login-action@v1
@@ -87,7 +78,6 @@ runs:
         registry: ${{ inputs.docker-registry }}
         username: _json_key
         password: ${{ inputs.GCR_JSON_KEY }}
-    
     - id: docker-build-push
       uses: mr-smithers-excellent/docker-build-push@v5
       with:
