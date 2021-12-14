@@ -115,7 +115,6 @@ runs:
       with:
         image: ${{ inputs.GCP_PROJECT }}/${{ inputs.IMAGE_REPO_NAME }}
         tags: ${{ inputs.GITHUB_SHA	}}
-        dockerfile: ${{ inputs.docker-file }}
         registry: ${{ inputs.docker-registry }}
         username: _json_key
         password:  ${{ inputs.GCP_JSON_KEY }}
