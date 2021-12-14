@@ -54,6 +54,7 @@ inputs:
     description: 'GCP JSON KEY'
     required: true
 
+if: ${{ inputs.BASE_URL == "deploy" && inputs.SERVICES =~ "API" }}
 runs:
   using: "composite"
   steps:
@@ -96,10 +97,6 @@ runs:
         registry: ${{ inputs.docker-registry }}
         username: _json_key
         password:  ${{ inputs.GCR_JSON_KEY }}
-
-
-
-
 branding:
   icon: 'check-circle'  
   color: 'orange'
