@@ -6,6 +6,56 @@ inputs:
     required: true
     default: "deploy"
     description: "Command to run"
+
+  token:
+    description: "Your Github token"
+    default: $
+    required: false
+
+  BASE_URL:
+    description: "Your base URL for your deployment"
+    default: x.knawat.com
+    required: false
+  DNS_ZONE_NAME:
+    description: "Your DNS Zone Name in GCP Cloud DNS"
+    default: knawat-com
+    required: false
+
+  docker-file:
+    required: false
+    default: "Dockerfile"
+    description: "Dockerfile to build, tag with preview metadata and publish to container registry"
+  docker-registry:
+    required: false
+    default: "gcr.io"
+    description: "Docker container registry. Defaults to GCP container registry"
+  IMAGE_TAGS:
+    required: false
+    default: ${{ GITHUB_SHA }} 	
+    description: "Image tag"
+  IMAGE_NAME:
+    required: false
+    default: knawat
+    description: "Image repo name in GCP image registery "
+
+  organization-name: 
+    description: 'The name of the organization on Jira'
+    required: false
+    default: 'knawat'
+  jira-token:  
+    description: 'Jira Token'
+    required: false
+
+  GCP_PROJECT:
+    description: 'GCP Project Name'
+    required: true
+    default: 'knawat'
+  GCR_JSON_KEY:
+    description: 'GCP JSON KEY'
+    required: true
+
+if: ${{ inputs.BASE_URL == "deploy" && inputs.SERVICES =~ "API" }}
+
 runs:
   using: "composite"
   steps:
