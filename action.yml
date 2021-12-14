@@ -100,7 +100,7 @@ runs:
           echo "The DNS created"
         else
           echo "The DNS is already exist or failed to create."
-          PWD
+          echo $PWD
         fi
 
     - id: login-docker 
