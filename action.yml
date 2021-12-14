@@ -6,10 +6,9 @@ inputs:
     required: true
     default: "deploy"
     description: "Command to run"
-
   token:
     description: "Your Github token"
-    default: $
+    default: test
     required: false
 
   BASE_URL:
@@ -50,7 +49,7 @@ inputs:
     description: 'GCP Project Name'
     required: true
     default: 'knawat'
-  GCR_JSON_KEY:
+  GCP_JSON_KEY:
     description: 'GCP JSON KEY'
     required: true
 
@@ -66,7 +65,7 @@ runs:
     - id: auth
       uses: google-github-actions/auth@v0.4.0
       with:
-        credentials_json: ${{ inputs.GCR_JSON_KEY }}
+        credentials_json: ${{ inputs.GCP_JSON_KEY }}
     - id: get-credentials
       uses: google-github-actions/get-gke-credentials@v0.3.0
       with:
@@ -91,7 +90,7 @@ runs:
       with:
         registry: ${{ inputs.docker-registry }}
         username: _json_key
-        password: ${{ inputs.GCR_JSON_KEY }}
+        password: ${{ inputs.GCP_JSON_KEY }}
     
     - id: docker-build-push
       uses: mr-smithers-excellent/docker-build-push@v5
@@ -101,7 +100,7 @@ runs:
         dockerfile: ${{ inputs.docker-file }}
         registry: ${{ inputs.docker-registry }}
         username: _json_key
-        password:  ${{ inputs.GCR_JSON_KEY }}
+        password:  ${{ inputs.GCP_JSON_KEY }}
 branding:
   icon: 'check-circle'  
   color: 'orange'
