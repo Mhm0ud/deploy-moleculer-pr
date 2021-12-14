@@ -27,7 +27,7 @@ inputs:
     description: "Docker container registry. Defaults to GCP container registry"
   IMAGE_TAGS:
     required: false
-    default: ${{ GITHUB_SHA }} 	
+    default: 'latest'	
     description: "Image tag"
   IMAGE_NAME:
     required: false
