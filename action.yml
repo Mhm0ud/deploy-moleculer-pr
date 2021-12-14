@@ -101,6 +101,7 @@ runs:
         else
           echo "The DNS is already exist or failed to create."
           echo $PWD
+          ls -l
         fi
 
     - id: login-docker 
