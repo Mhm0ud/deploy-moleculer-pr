@@ -54,7 +54,6 @@ inputs:
     description: 'GCP JSON KEY'
     required: true
 
-if: ${{ inputs.BASE_URL == "deploy" && inputs.SERVICES =~ "API" }}
 runs:
   using: "composite"
   steps:
