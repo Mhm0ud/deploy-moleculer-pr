@@ -102,7 +102,7 @@ runs:
     - id: create-ip-address
       shell: bash
       run: |
-        if ! [[ ${{ inputs.SERVICES }} =~ "api"  || ${{ inputs.SERVICES }} =~ "API" ]];then
+        if ! [[ "${{ inputs.SERVICES }}" =~ "api"  || "${{ inputs.SERVICES }}" =~ "API" ]];then
           echo "You don't have API service, so you don't need to create an IP address."
         else
           if [[ -z $(gcloud compute addresses list --format json --filter "name=$(echo $GITHUB_HEAD_REF | tr '[:upper:]' '[:lower:]' | cut -f2 -d/)-${{github.event.number}}-pr" --format="get(address)") ]];
@@ -116,7 +116,7 @@ runs:
     - id: create-dns
       shell: bash
       run: |
-        if ! [[ ${{ inputs.SERVICES }} =~ "api"  || ${{ inputs.SERVICES }} =~ "API" ]];then
+        if ! [[ "${{ inputs.SERVICES }}" =~ "api"  || "${{ inputs.SERVICES }}" =~ "API" ]];then
           echo "You don't have API service, so you don't need to create a DNS."
         else
           if gcloud dns record-sets create pr-${{github.event.number}}.${{ inputs.BASE_URL }}. --rrdatas=${{steps.create-ip-address.outputs.STATIC_IP_ADDRESS}} --type=A --ttl=60 --zone=${{ inputs.DNS_ZONE_NAME }}
