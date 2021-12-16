@@ -76,6 +76,9 @@ inputs:
     description: "Your DNS Zone Name in GCP Cloud DNS"
     default: knawat-com
     required: false
+  GITHUB_TOKEN:
+    description: "Your Github token"
+    required: true
 
 runs:
   using: "composite"
@@ -166,7 +169,7 @@ runs:
 
     - uses: mshick/add-pr-comment@v1
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ input.GITHUB_TOKEN }}
       with:
         message: |
           ${{steps.deploy-helm.outputs.helm-output}}
