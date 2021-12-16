@@ -166,7 +166,7 @@ runs:
           --set ingress.hosts[0].host="pr-${{github.event.number}}.${{ inputs.BASE_URL }}" \
           --set ingress.hosts[0].paths[0].path="/*" \
           --set ingress.hosts[0].paths[0].backend.serviceName="api" \
-          --set ingress.hosts[0].paths[0].backend.servicePort="80")
+          --set ingress.hosts[0].paths[0].backend.servicePort="80")"
 
     - uses: mshick/add-pr-comment@v1
       env:
