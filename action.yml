@@ -167,15 +167,16 @@ runs:
           --set ingress.hosts[0].paths[0].path="/*" \
           --set ingress.hosts[0].paths[0].backend.serviceName="api" \
           --set ingress.hosts[0].paths[0].backend.servicePort="80")"
+        echo "::set-output name=helm-note::$(helm get notes $name -n $name)"
 
     - uses: mshick/add-pr-comment@v1
       env:
         GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
       with:
         message: |
-          name=$(echo $GITHUB_HEAD_REF | tr '[:upper:]' '[:lower:]' | cut -f2 -d/)-${{github.event.number}}-pr
           ${{steps.deploy-helm.outputs.helm-output}}
-          helm get notes $name -n $name
+          ${{steps.deploy-helm.outputs.helm-note}}
+          
         allow-repeats: true
 branding:
   icon: 'anchor'  
