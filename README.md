@@ -58,3 +58,26 @@ If the SERVICES conatins API service, it will create:
 2- DNS: pr-"PR_Number"."BASE_URL"
     so, if I set the BASE_URL=api.knawat.io in the env, the DNS will create with the following name: pr-263.api.knawat.io and it's point to the previous IP address.
 3- For moleculer helm package will create the ingress.
+
+If you need to add environment variables to your application you can use HELM_SET variable:
+
+```yaml
+ with: 
+     HELM_SET: environment.env.VAR1=VAL1,environment.env.VAR2=VAL2
+```
+
+If you need to enable molecler Lab:
+
+```yaml
+ with: 
+     MOLECULER_APM_ENABLE: true
+     AGENT_TOKEN: YourApiToken
+     AGENT_APIKEY: YourApiKey
+```
+
+If you need to change the transporter use by the application:
+
+```yaml
+ with: 
+     TRANSPORTER: nats://nats:4222
+```
