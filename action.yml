@@ -169,7 +169,7 @@ runs:
 
     - uses: mshick/add-pr-comment@v1
       env:
-        GITHUB_TOKEN: ${{ input.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
       with:
         message: |
           ${{steps.deploy-helm.outputs.helm-output}}
