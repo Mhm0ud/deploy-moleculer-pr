@@ -43,7 +43,7 @@ inputs:
     description: "The moleculer cron for helm chart."
   MOLECULER_APM_ENABLE:
     required: false
-    default: 1
+    default: "0"
     description: "The moleculer lab for helm chart."
   TRANSPORTER:
     required: false
