@@ -147,7 +147,7 @@ runs:
       run: |
         name=$(echo $GITHUB_HEAD_REF | tr '[:upper:]' '[:lower:]' | cut -f2 -d/)-${{github.event.number}}-pr
         helm repo add helm-charts https://knawat.github.io/helm-charts
-        echo "::set-output name=helm-output::$(helm upgrade $name helm-charts/moleculer \
+        OUTPUT=$(helm upgrade $name helm-charts/moleculer \
           --install \
           -n "$name" \
           --create-namespace \
@@ -166,17 +166,18 @@ runs:
           --set ingress.hosts[0].host="pr-${{github.event.number}}.${{ inputs.BASE_URL }}" \
           --set ingress.hosts[0].paths[0].path="/*" \
           --set ingress.hosts[0].paths[0].backend.serviceName="api" \
-          --set ingress.hosts[0].paths[0].backend.servicePort="80")"
-        echo "::set-output name=helm-note::$(helm get notes $name -n $name)"
+          --set ingress.hosts[0].paths[0].backend.servicePort="80")
+        OUTPUT="${OUTPUT//'%'/'%25'}"
+        OUTPUT="${OUTPUT//$'\n'/'%0A'}"
+        OUTPUT="${OUTPUT//$'\r'/'%0D'}"
+        echo "::set-output name=helm-note::$OUTPUT"
 
     - uses: mshick/add-pr-comment@v1
       env:
         GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
       with:
         message: |
-          ${{steps.deploy-helm.outputs.helm-output}}
           ${{steps.deploy-helm.outputs.helm-note}}
-          
         allow-repeats: true
 branding:
   icon: 'anchor'  
