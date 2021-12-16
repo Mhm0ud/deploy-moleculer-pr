@@ -32,7 +32,36 @@ inputs:
   IMAGE_REPO_NAME:
     required: false
     default: knawat
-    description: "Image repo name in GCP image registery "
+    description: "Image repo name in GCP image registery"
+  CONTAINER_NAME:
+    required: false
+    default: app
+    description: "The container name that should deploy to the k8s cluster"
+  CRON_ENABLED:
+    required: false
+    default: false
+    description: "The moleculer cron for helm chart."
+  MOLECULER_APM_ENABLE:
+    required: false
+    default: 1
+    description: "The moleculer lab for helm chart."
+  TRANSPORTER:
+    required: false
+    default: "TCP"
+    description: "The transporter for the moleculer APP"
+  AGENT_TOKEN:
+    required: false
+    default: "12341234"
+    description: "The moleculer lab agent token for the moleculer APP"
+  AGENT_APIKEY:
+    required: false
+    default: "12341234"
+    description: "The moleculer lab API key for the moleculer APP"
+  HELM_SET:
+    description: Additional helm values to set environment variables (corresponds to `helm upgrade --set`). Should have format environment.env.VAR1=VAL1,environment.env.VAR2=VAL2.
+    required: false
+
+
 
   organization-name: 
     description: 'The name of the organization on Jira'
@@ -60,9 +89,9 @@ inputs:
     default: 'knawat'
   
   SERVICES:
-    description: 'The name of the moleculer services you want to deploy'
+    description: 'The name of the moleculer services you want to deploy, it  should between {}'
     required: false
-    default: 'API, test'
+    default: '{API, test}'
 
 runs:
   using: "composite"
@@ -127,6 +156,32 @@ runs:
             echo $PWD
           fi
         fi
+
+    - id: deploy-helm
+      shell: bash
+      run: |
+        name=$(echo $GITHUB_HEAD_REF | tr '[:upper:]' '[:lower:]' | cut -f2 -d/)-${{github.event.number}}-pr
+        helm repo add helm-charts https://knawat.github.io/helm-charts
+        helm upgrade $name helm-charts/moleculer \
+          --install \
+          -n "$name" \
+          --create-namespace \
+          --set container.name="${{ inputs.CONTAINER_NAME }}" \
+          --set ingress.annotations."kubernetes\.io/ingress\.global-static-ip-name"="$name"  --set container.services="${{ inputs.SERVICES }}" \
+          --set image.repository="${{ inputs.docker-registry }}/${{ inputs.GCP_PROJECT }}/${{ inputs.IMAGE_REPO_NAME }}" \
+          --set image.tag="${{ inputs.IMAGE_TAGS	}}" \
+          --set cron.enabled=${{ inputs.CRON_ENABLED	}} \
+          --set environment.secret.AGENT_APIKEY=${{ inputs.AGENT_APIKEY }} \
+          --set environment.secret.AGENT_TOKEN=${{ inputs.AGENT_TOKEN }} \
+          --set environment.env.BASE_URL="pr-${{github.event.number}}.${{ inputs.BASE_URL }}" \
+          --set environment.env.NAMESPACE="$name" \
+          --set environment.env.TRANSPORTER=${{ inputs.TRANSPORTER	}} \
+          --set environment.env.MOLECULER_APM_ENABLE=${{ inputs.MOLECULER_APM_ENABLE	}} \
+          --set "${{ inputs.HELM_SET	}}" \
+          --set ingress.hosts[0].host="pr-${{github.event.number}}.${{ inputs.BASE_URL }}" \
+          --set ingress.hosts[0].paths[0].path="/*" \
+          --set ingress.hosts[0].paths[0].backend.serviceName="api" \
+          --set ingress.hosts[0].paths[0].backend.servicePort="80"
 branding:
   icon: 'check-circle'  
   color: 'orange'
