@@ -173,7 +173,9 @@ runs:
         GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
       with:
         message: |
+          name=$(echo $GITHUB_HEAD_REF | tr '[:upper:]' '[:lower:]' | cut -f2 -d/)-${{github.event.number}}-pr
           ${{steps.deploy-helm.outputs.helm-output}}
+          helm get notes $name -n $name
         allow-repeats: true
 branding:
   icon: 'anchor'  
