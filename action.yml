@@ -51,9 +51,11 @@ inputs:
     description: "The transporter for the moleculer APP"
   AGENT_TOKEN:
     required: false
+    type: string
     default: "12341234"
     description: "The moleculer lab agent token for the moleculer APP"
   AGENT_APIKEY:
+    type: string
     required: false
     default: "12341234"
     description: "The moleculer lab API key for the moleculer APP"
@@ -171,12 +173,12 @@ runs:
           --set image.repository="${{ inputs.docker-registry }}/${{ inputs.GCP_PROJECT }}/${{ inputs.IMAGE_REPO_NAME }}" \
           --set image.tag="${{ inputs.IMAGE_TAGS	}}" \
           --set cron.enabled=${{ inputs.CRON_ENABLED	}} \
-          --set environment.secret.AGENT_APIKEY=${{ inputs.AGENT_APIKEY }} \
-          --set environment.secret.AGENT_TOKEN=${{ inputs.AGENT_TOKEN }} \
+          --set environment.secret.AGENT_APIKEY="${{ inputs.AGENT_APIKEY }}" \
+          --set environment.secret.AGENT_TOKEN="${{ inputs.AGENT_TOKEN }}" \
           --set environment.env.BASE_URL="pr-${{github.event.number}}.${{ inputs.BASE_URL }}" \
           --set environment.env.NAMESPACE="$name" \
           --set environment.env.TRANSPORTER=${{ inputs.TRANSPORTER	}} \
-          --set environment.env.MOLECULER_APM_ENABLE=${{ inputs.MOLECULER_APM_ENABLE	}} \
+          --set environment.env.MOLECULER_APM_ENABLE="${{ inputs.MOLECULER_APM_ENABLE	}}" \
           --set "${{ inputs.HELM_SET	}}" \
           --set ingress.hosts[0].host="pr-${{github.event.number}}.${{ inputs.BASE_URL }}" \
           --set ingress.hosts[0].paths[0].path="/*" \
