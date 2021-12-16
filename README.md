@@ -1,7 +1,4 @@
 # GitHub Action for deploy Pull Requests in Google Kubernetes Service for Moleculer App
-This deploy a moleculer application to GKE via Moleculer Helm Package.
-
-# GitHub Action for deploy Pull Requests in Google Kubernetes Service for Moleculer App
       
 ## Description
 A Github Action to deploy previews of Pull Requests to GKE via Moleculer Helm Package 🚀
