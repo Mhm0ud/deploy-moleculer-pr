@@ -1,22 +1,7 @@
-name: 'Preview Pull Requests in Google Kubernetes Service'
+name: 'Preview Pull Requests in Google Kubernetes Service for Moleculer App'
 description: 'A Github Action to deploy moleculer app preview of Pull Requests to GKE - Google Kubernetes Engine using Moleculer Helm charts 🚀'
 author: 'Mahmoud Almasri'
 inputs:
-  command:
-    required: true
-    default: 'deploy'
-    description: "Command to run"
-    type: string
-  BASE_URL:
-    description: "Your base URL for your deployment"
-    default: 'x.knawat.com'
-    required: false
-    type: string
-  DNS_ZONE_NAME:
-    description: "Your DNS Zone Name in GCP Cloud DNS"
-    default: knawat-com
-    required: false
-
   docker-file:
     required: false
     default: "Dockerfile"
@@ -59,19 +44,18 @@ inputs:
     required: false
     default: somesecret
     description: "The moleculer lab API key for the moleculer APP"
+  SERVICES:
+    description: 'The name of the moleculer services you want to deploy, it  should between {}'
+    required: false
+    default: '{API, test}'
   HELM_SET:
     description: Additional helm values to set environment variables (corresponds to `helm upgrade --set`). Should have format environment.env.VAR1=VAL1,environment.env.VAR2=VAL2.
     required: false
-
-
-
-  organization-name: 
-    description: 'The name of the organization on Jira'
+  BASE_URL:
+    description: "Your base URL for your deployment"
+    default: 'x.knawat.com'
     required: false
-    default: 'knawat'
-  jira-token:  
-    description: 'Jira Token'
-    required: false
+    type: string
 
   GCP_PROJECT:
     description: 'GCP Project Name'
@@ -80,7 +64,6 @@ inputs:
   GCP_JSON_KEY:
     description: 'GCP JSON KEY'
     required: true
-
   cluster_name: 
     description: 'GCP cluster Name'
     required: true
@@ -89,18 +72,14 @@ inputs:
     description: 'GCP cluster location'
     required: true
     default: 'knawat'
-  
-  SERVICES:
-    description: 'The name of the moleculer services you want to deploy, it  should between {}'
+  DNS_ZONE_NAME:
+    description: "Your DNS Zone Name in GCP Cloud DNS"
+    default: knawat-com
     required: false
-    default: '{API, test}'
 
 runs:
   using: "composite"
   steps:
-    - uses: actions/checkout@v2
-    - run: ls -l
-      shell: bash
     - id: login-docker 
       name: Login to GCR
       uses: docker/login-action@v1
@@ -164,7 +143,7 @@ runs:
       run: |
         name=$(echo $GITHUB_HEAD_REF | tr '[:upper:]' '[:lower:]' | cut -f2 -d/)-${{github.event.number}}-pr
         helm repo add helm-charts https://knawat.github.io/helm-charts
-        helm upgrade $name helm-charts/moleculer \
+        echo "::set-output name=helm-output::$(helm upgrade $name helm-charts/moleculer \
           --install \
           -n "$name" \
           --create-namespace \
@@ -183,7 +162,15 @@ runs:
           --set ingress.hosts[0].host="pr-${{github.event.number}}.${{ inputs.BASE_URL }}" \
           --set ingress.hosts[0].paths[0].path="/*" \
           --set ingress.hosts[0].paths[0].backend.serviceName="api" \
-          --set ingress.hosts[0].paths[0].backend.servicePort="80"
+          --set ingress.hosts[0].paths[0].backend.servicePort="80")
+
+    - uses: mshick/add-pr-comment@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        message: |
+          ${{steps.deploy-helm.outputs.helm-output}}
+        allow-repeats: true
 branding:
-  icon: 'check-circle'  
+  icon: 'anchor'  
   color: 'orange'
