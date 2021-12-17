@@ -152,7 +152,7 @@ runs:
           -n "$name" \
           --create-namespace \
           --set container.name="${{ inputs.CONTAINER_NAME }}" \
-          --set ingress.annotations."kubernetes\.io/ingress\.global-static-ip-name"="$name"  --set container.services="${{ inputs.SERVICES }}" \
+          --set ingress.annotations."kubernetes\.io/ingress\.global-static-ip-name"="$name"  --set container.services="{api,auth,categories,config,currencies,files,images,importer,oms,parser,products,suppliers,translator,warehouse,weight}" \
           --set image.repository="${{ inputs.docker-registry }}/${{ inputs.GCP_PROJECT }}/${{ inputs.IMAGE_REPO_NAME }}" \
           --set image.tag="${{ inputs.IMAGE_TAGS	}}" \
           --set cron.enabled=${{ inputs.CRON_ENABLED	}} \
