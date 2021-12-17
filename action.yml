@@ -119,12 +119,12 @@ runs:
         if ! [[ "${{ inputs.SERVICES }}" =~ "api"  || "${{ inputs.SERVICES }}" =~ "API" ]];then
           echo "You don't have API service, so you don't need to create an IP address."
         else
-          if [[ -z $(gcloud compute addresses list --format json --filter "name=$(echo $GITHUB_HEAD_REF | tr '[:upper:]' '[:lower:]' | cut -f2 -d/)-${{github.event.number}}-pr" --format="get(address)") ]];
+          if [[ -z $(gcloud compute addresses list --format json --filter "name=$(echo $GITHUB_REPOSITORY | tr '[:upper:]' '[:lower:]' | cut -f2 -d/)-${{github.event.number}}-pr" --format="get(address)") ]];
           then
-            gcloud compute addresses create $(echo $GITHUB_HEAD_REF | tr '[:upper:]' '[:lower:]' | cut -f2 -d/)-${{github.event.number}}-pr --global --ip-version IPV4
-            echo "::set-output name=STATIC_IP_ADDRESS::$(gcloud compute addresses list --format json --filter "name=$(echo $GITHUB_HEAD_REF | tr '[:upper:]' '[:lower:]' | cut -f2 -d/)-${{github.event.number}}-pr" --format="get(address)")"
+            gcloud compute addresses create $(echo $GITHUB_REPOSITORY | tr '[:upper:]' '[:lower:]' | cut -f2 -d/)-${{github.event.number}}-pr --global --ip-version IPV4
+            echo "::set-output name=STATIC_IP_ADDRESS::$(gcloud compute addresses list --format json --filter "name=$(echo $GITHUB_REPOSITORY | tr '[:upper:]' '[:lower:]' | cut -f2 -d/)-${{github.event.number}}-pr" --format="get(address)")"
           else
-            echo "::set-output name=STATIC_IP_ADDRESS::$(gcloud compute addresses list --format json --filter "name=$(echo $GITHUB_HEAD_REF | tr '[:upper:]' '[:lower:]' | cut -f2 -d/)-${{github.event.number}}-pr" --format="get(address)")"
+            echo "::set-output name=STATIC_IP_ADDRESS::$(gcloud compute addresses list --format json --filter "name=$(echo $GITHUB_REPOSITORY | tr '[:upper:]' '[:lower:]' | cut -f2 -d/)-${{github.event.number}}-pr" --format="get(address)")"
           fi
         fi
     - id: create-dns
@@ -145,7 +145,7 @@ runs:
     - id: deploy-helm
       shell: bash
       run: |
-        name=$(echo $GITHUB_HEAD_REF | tr '[:upper:]' '[:lower:]' | cut -f2 -d/)-${{github.event.number}}-pr
+        name=$(echo $GITHUB_REPOSITORY | tr '[:upper:]' '[:lower:]' | cut -f2 -d/)-${{github.event.number}}-pr
         helm repo add helm-charts https://knawat.github.io/helm-charts
         OUTPUT=$(helm upgrade $name helm-charts/moleculer \
           --install \
