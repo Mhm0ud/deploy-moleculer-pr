@@ -70,7 +70,7 @@ If you need to enable molecler Lab:
 
 ```yaml
  with: 
-     MOLECULER_APM_ENABLE: true
+     MOLECULER_APM_ENABLE: 1
      AGENT_TOKEN: YourApiToken
      AGENT_APIKEY: YourApiKey
 ```
