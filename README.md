@@ -53,11 +53,11 @@ jobs:
 ## Usage
 
 If the SERVICES conatins API service, it will create:
-1- External IP: "RepoName"-"PR_Number"-pr
+1. External IP: "RepoName"-"PR_Number"-pr
     so, for example: I'm working on a repo name: "knawat/app" and I created a PR (263), the IP will create with the following name: app-263-pr
-2- DNS: pr-"PR_Number"."BASE_URL"
+2. DNS: pr-"PR_Number"."BASE_URL"
     so, if I set the BASE_URL=api.knawat.io in the env, the DNS will create with the following name: pr-263.api.knawat.io and it's point to the previous IP address.
-3- For moleculer helm package will create the ingress.
+3. For moleculer helm package will create the ingress.
 
 If you need to add environment variables to your application you can use HELM_SET variable:
 
