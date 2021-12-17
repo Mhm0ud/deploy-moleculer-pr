@@ -176,7 +176,7 @@ runs:
       run: |
         if [[ ${{ inputs.MOLECULER_APM_ENABLE }} == 1 &&  "${{ inputs.SERVICES }}" =~ "api" ]];then
           gcloud container clusters get-credentials ${{ inputs.cluster_name }} --zone ${{ inputs.cluster_location }} --project ${{ inputs.GCP_PROJECT }}
-          echo "::set-output name=LAB_IP_ADDRESS::$(kubectl get service --field-selector='metadata.name=lab' -n $(echo $GITHUB_REPOSITORY | tr '[:upper:]' '[:lower:]' | cut -f2 -d/)-$BUDDY_EXECUTION_PULL_REQUEST_NO-pr  --output jsonpath='{.items[0].status.loadBalancer.ingress[0].ip}')"
+          echo "::set-output name=LAB_IP_ADDRESS::$(kubectl get service --field-selector='metadata.name=lab' -n $(echo $GITHUB_REPOSITORY | tr '[:upper:]' '[:lower:]' | cut -f2 -d/)-${{github.event.number}}-pr  --output jsonpath='{.items[0].status.loadBalancer.ingress[0].ip}')"
         else
           echo "::set-output name=LAB_IP_ADDRESS::echo("You don't have Lab service, or this is a dependecy deploy so, to get the lab IP go the the main PR.")"
         fi
