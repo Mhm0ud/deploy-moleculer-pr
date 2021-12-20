@@ -169,7 +169,6 @@ runs:
           --set environment.secret.AGENT_APIKEY=${{ inputs.AGENT_APIKEY }} \
           --set environment.secret.AGENT_TOKEN=${{ inputs.AGENT_TOKEN }} \
           --set environment.secret.MONGO_URI=${{ inputs.MONGO_URI }} \
-          --set environment.env.BASE_URL="pr-${{github.event.number}}.${{ inputs.BASE_URL }}" \
           --set environment.env.NAMESPACE="$name" \
           --set environment.env.SERVICEDIR=${{ inputs.SERVICEDIR	}}  \
           --set environment.env.TRANSPORTER=${{ inputs.TRANSPORTER	}} \
