@@ -174,11 +174,11 @@ runs:
           --set environment.env.SERVICEDIR=${{ inputs.SERVICEDIR	}}  \
           --set environment.env.TRANSPORTER=${{ inputs.TRANSPORTER	}} \
           --set environment.env.MOLECULER_APM_ENABLE=${{ inputs.MOLECULER_APM_ENABLE	}} \
-          --set "${{ inputs.HELM_SET	}}" \
           --set ingress.hosts[0].host="pr-${{github.event.number}}.${{ inputs.BASE_URL }}" \
           --set ingress.hosts[0].paths[0].path="/*" \
           --set ingress.hosts[0].paths[0].backend.serviceName="api" \
-          --set ingress.hosts[0].paths[0].backend.servicePort="80")
+          --set ingress.hosts[0].paths[0].backend.servicePort="80") \
+          --set "${{ inputs.HELM_SET	}}" 
         OUTPUT="${OUTPUT//'%'/'%25'}"
         OUTPUT="${OUTPUT//$'\n'/'%0A'}"
         OUTPUT="${OUTPUT//$'\r'/'%0D'}"
