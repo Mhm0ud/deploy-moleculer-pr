@@ -2,6 +2,10 @@ name: 'Preview Pull Requests in Google Kubernetes Service for Moleculer App'
 description: 'Deploy moleculer app preview of Pull Requests to GKE - Google Kubernetes Engine using Moleculer Helm charts 🚀'
 author: 'Mahmoud Almasri'
 inputs:
+  HELM_RELEASE_NAME:
+    required: false
+    default: $(echo $GITHUB_REPOSITORY | tr '[:upper:]' '[:lower:]' | cut -f2 -d/)-${{github.event.number}}-pr
+    description: "Helm release name for the deployment"
   DOCKER_FILE:
     required: false
     default: "Dockerfile"
@@ -136,12 +140,12 @@ runs:
         if ! [[ "${{ inputs.SERVICES }}" =~ "api"  || "${{ inputs.SERVICES }}" =~ "API" ]];then
           echo "You don't have API service, so you don't need to create an IP address."
         else
-          if [[ -z $(gcloud compute addresses list --format json --filter "name=$(echo $GITHUB_REPOSITORY | tr '[:upper:]' '[:lower:]' | cut -f2 -d/)-${{github.event.number}}-pr" --format="get(address)") ]];
+          if [[ -z $(gcloud compute addresses list --format json --filter "name=${{ inputs.HELM_RELEASE_NAME }}" --format="get(address)") ]];
           then
-            gcloud compute addresses create $(echo $GITHUB_REPOSITORY | tr '[:upper:]' '[:lower:]' | cut -f2 -d/)-${{github.event.number}}-pr --global --ip-version IPV4
-            echo "::set-output name=STATIC_IP_ADDRESS::$(gcloud compute addresses list --format json --filter "name=$(echo $GITHUB_REPOSITORY | tr '[:upper:]' '[:lower:]' | cut -f2 -d/)-${{github.event.number}}-pr" --format="get(address)")"
+            gcloud compute addresses create ${{ inputs.HELM_RELEASE_NAME }} --global --ip-version IPV4
+            echo "::set-output name=STATIC_IP_ADDRESS::$(gcloud compute addresses list --format json --filter "name=${{ inputs.HELM_RELEASE_NAME }}" --format="get(address)")"
           else
-            echo "::set-output name=STATIC_IP_ADDRESS::$(gcloud compute addresses list --format json --filter "name=$(echo $GITHUB_REPOSITORY | tr '[:upper:]' '[:lower:]' | cut -f2 -d/)-${{github.event.number}}-pr" --format="get(address)")"
+            echo "::set-output name=STATIC_IP_ADDRESS::$(gcloud compute addresses list --format json --filter "name=${{ inputs.HELM_RELEASE_NAME }}" --format="get(address)")"
           fi
         fi
     - id: create-dns
@@ -161,14 +165,14 @@ runs:
     - id: deploy-helm
       shell: bash
       run: |
-        name=$(echo $GITHUB_REPOSITORY | tr '[:upper:]' '[:lower:]' | cut -f2 -d/)-${{github.event.number}}-pr
+        name=${{ inputs.HELM_RELEASE_NAME }}
         helm repo add helm-charts https://knawat.github.io/helm-charts
-        OUTPUT=$(helm upgrade $name helm-charts/moleculer \
+        OUTPUT=$(helm upgrade ${{ inputs.HELM_RELEASE_NAME }} helm-charts/moleculer \
           --install \
-          -n "$name" \
+          -n "${{ inputs.HELM_RELEASE_NAME }}" \
           --create-namespace \
           --set container.name="${{ inputs.CONTAINER_NAME }}" \
-          --set ingress.annotations."kubernetes\.io/ingress\.global-static-ip-name"="$name"  --set container.services="{api,auth,categories,config,currencies,files,images,importer,oms,parser,products,suppliers,translator,warehouse,weight}" \
+          --set ingress.annotations."kubernetes\.io/ingress\.global-static-ip-name"="${{ inputs.HELM_RELEASE_NAME }}"  --set container.services="{api,auth,categories,config,currencies,files,images,importer,oms,parser,products,suppliers,translator,warehouse,weight}" \
           --set image.repository="${{ inputs.DOCKER_REGISTRY }}/${{ inputs.GCP_PROJECT }}/${{ inputs.IMAGE_REPO_NAME }}" \
           --set image.tag="${{ inputs.IMAGE_TAGS	}}" \
           --set cron.enabled=${{ inputs.CRON_ENABLED	}} \
@@ -177,7 +181,7 @@ runs:
           --set environment.secret.AGENT_TOKEN=${{ inputs.AGENT_TOKEN }} \
           --set environment.env.BASE_URL="pr-${{github.event.number}}.${{ inputs.BASE_URL }}" \
           --set environment.env.SERVICEDIR=${{ inputs.SERVICEDIR }} \
-          --set environment.env.NAMESPACE="$name" \
+          --set environment.env.NAMESPACE="${{ inputs.HELM_RELEASE_NAME }}" \
           --set environment.env.TRANSPORTER=${{ inputs.TRANSPORTER	}} \
           --set environment.env.MOLECULER_APM_ENABLE=${{ inputs.MOLECULER_APM_ENABLE	}} \
           --set "${{ inputs.HELM_SET	}}" \
@@ -195,7 +199,7 @@ runs:
       run: |
         if [[ ${{ inputs.MOLECULER_APM_ENABLE }} == 1 &&  "${{ inputs.SERVICES }}" =~ "api" ]];then
           gcloud container clusters get-credentials ${{ inputs.CLUSTER_NAME }} --zone ${{ inputs.CLUSTER_LOCATION }} --project ${{ inputs.GCP_PROJECT }}
-          echo "::set-output name=LAB_IP_ADDRESS::$(kubectl get service --field-selector="metadata.name=lab" -n $(echo $GITHUB_REPOSITORY | tr '[:upper:]' '[:lower:]' | cut -f2 -d/)-${{github.event.number}}-pr  --output jsonpath="{.items[0].status.loadBalancer.ingress[0].ip}")"
+          echo "::set-output name=LAB_IP_ADDRESS::$(kubectl get service --field-selector="metadata.name=lab" -n ${{ inputs.HELM_RELEASE_NAME }}  --output jsonpath="{.items[0].status.loadBalancer.ingress[0].ip}")"
         else
           echo "::set-output name=LAB_IP_ADDRESS::echo("You dont have Lab service enabled, or this is a dependecy deploy so, to get the lab IP go the the main PR.")"
         fi
