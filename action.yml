@@ -2,25 +2,25 @@ name: 'Preview Pull Requests in Google Kubernetes Service for Moleculer App'
 description: 'Deploy moleculer app preview of Pull Requests to GKE - Google Kubernetes Engine using Moleculer Helm charts 🚀'
 author: 'Mahmoud Almasri'
 inputs:
-  docker-file:
+  DOCKER_FILE:
     required: false
     default: "Dockerfile"
     description: "Dockerfile to build, tag with preview metadata and publish to container registry"
-  docker-registry:
+  DOCKER_REGISTRY:
     required: false
     default: "gcr.io"
-    description: "Docker container registry. Defaults to GCP container registry"
+    description: "Docker image registry. Defaults to GCP container registry"
   IMAGE_TAGS:
     required: false
     default: 'latest'	
     description: "Image tag"
   IMAGE_REPO_NAME:
     required: false
-    default: knawat
-    description: "Image repo name in GCP image registery"
+    default: myImageRepo
+    description: "Image repo name in the image registery"
   CONTAINER_NAME:
     required: false
-    default: app
+    default: myApp
     description: "The container name that should deploy to the k8s cluster"
   CRON_ENABLED:
     required: false
@@ -48,7 +48,7 @@ inputs:
     type: string
     description: 'The name of the moleculer services you want to deploy, it  should between {}'
     required: false
-    default: '{API, test}'
+    default: ''
   SERVICEDIR:
     type: string
     description: 'The name of the moleculer services directory'
@@ -56,15 +56,15 @@ inputs:
     default: 'build/services'
   MONGO_URI:
     description: 'The DB connection string'
-    required: false
+    required: true
     default: ''
   HELM_SET:
     description: Additional helm values to set environment variables (corresponds to `helm upgrade --set`). Should have format environment.env.VAR1=VAL1,environment.env.VAR2=VAL2.
     required: false
   BASE_URL:
     description: "Your base URL for your deployment"
-    default: 'x.knawat.com'
-    required: false
+    default: 'x.example.com'
+    required: true
     type: string
 
   GCP_PROJECT:
@@ -74,11 +74,11 @@ inputs:
   GCP_JSON_KEY:
     description: 'GCP JSON KEY'
     required: true
-  cluster_name: 
+  CLUSTER_NAME: 
     description: 'GCP cluster Name'
     required: true
     default: 'knawat'
-  cluster_location:
+  CLUSTER_LOCATION:
     description: 'GCP cluster location'
     required: true
     default: 'knawat'
@@ -98,7 +98,7 @@ runs:
       name: Login to GCR
       uses: docker/login-action@v1
       with:
-        registry: ${{ inputs.docker-registry }}
+        registry: ${{ inputs.DOCKER_REGISTRY }}
         username: _json_key
         password: ${{ inputs.GCP_JSON_KEY }}
     
@@ -107,7 +107,7 @@ runs:
       with:
         image: ${{ inputs.GCP_PROJECT }}/${{ inputs.IMAGE_REPO_NAME }}
         tags: ${{ inputs.IMAGE_TAGS	}}
-        registry: ${{ inputs.docker-registry }}
+        registry: ${{ inputs.DOCKER_REGISTRY }}
         username: _json_key
         password:  ${{ inputs.GCP_JSON_KEY }}
     - id: auth
@@ -117,8 +117,8 @@ runs:
     - id: get-credentials
       uses: google-github-actions/get-gke-credentials@v0.3.0
       with:
-        cluster_name: ${{ inputs.cluster_name }}
-        location: ${{ inputs.cluster_location }}
+        CLUSTER_NAME: ${{ inputs.CLUSTER_NAME }}
+        location: ${{ inputs.CLUSTER_LOCATION }}
 
     - name: Set up Cloud SDK
       uses: google-github-actions/setup-gcloud@v0.3.0
@@ -162,7 +162,7 @@ runs:
           --create-namespace \
           --set container.name="${{ inputs.CONTAINER_NAME }}" \
           --set ingress.annotations."kubernetes\.io/ingress\.global-static-ip-name"="$name"  --set container.services="{api,auth,categories,config,currencies,files,images,importer,oms,parser,products,suppliers,translator,warehouse,weight}" \
-          --set image.repository="${{ inputs.docker-registry }}/${{ inputs.GCP_PROJECT }}/${{ inputs.IMAGE_REPO_NAME }}" \
+          --set image.repository="${{ inputs.DOCKER_REGISTRY }}/${{ inputs.GCP_PROJECT }}/${{ inputs.IMAGE_REPO_NAME }}" \
           --set image.tag="${{ inputs.IMAGE_TAGS	}}" \
           --set cron.enabled=${{ inputs.CRON_ENABLED	}} \
           --set-string environment.secret.MONGO_URI='${{ inputs.MONGO_URI }}' \
@@ -187,7 +187,7 @@ runs:
       shell: bash
       run: |
         if [[ ${{ inputs.MOLECULER_APM_ENABLE }} == 1 &&  "${{ inputs.SERVICES }}" =~ "api" ]];then
-          gcloud container clusters get-credentials ${{ inputs.cluster_name }} --zone ${{ inputs.cluster_location }} --project ${{ inputs.GCP_PROJECT }}
+          gcloud container clusters get-credentials ${{ inputs.CLUSTER_NAME }} --zone ${{ inputs.CLUSTER_LOCATION }} --project ${{ inputs.GCP_PROJECT }}
           echo "::set-output name=LAB_IP_ADDRESS::$(kubectl get service --field-selector="metadata.name=lab" -n $(echo $GITHUB_REPOSITORY | tr '[:upper:]' '[:lower:]' | cut -f2 -d/)-${{github.event.number}}-pr  --output jsonpath="{.items[0].status.loadBalancer.ingress[0].ip}")"
         else
           echo "::set-output name=LAB_IP_ADDRESS::echo("You dont have Lab service enabled, or this is a dependecy deploy so, to get the lab IP go the the main PR.")"

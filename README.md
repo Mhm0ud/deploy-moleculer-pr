@@ -35,18 +35,29 @@ jobs:
     steps:
       - uses: knawat/github-actions-deploy-moleculer@main
         with: 
-          BASE_URL: 'api.knawat.io'
-          DNS_ZONE_NAME: 'knawat-io'
-          docker-registry: 'gcr.io'
-          IMAGE_REPO_NAME: 'api'
+          #APPLICATION VARIABLE
+          SERVICES: {api,products}
+          SERVICEDIR: build/services
+          MOLECULER_APM_ENABLE: 1
+          AGENT_TOKEN: ${{ secrets.AGENT_TOKEN }}
+          AGENT_APIKEY: ${{ secrets.AGENT_APIKEY }}
+          TRANSPORTER: tcp
+          MONGO_URI: '${{ secrets.MONGO_URI }}' //should include it between ''
+          BASE_URL: api.example.com
+          HELM_SET: ${{ secrets.HELM_SET }} //To include any other application env var (environment.env.VAR1=VAL1)
+          # GCP Configuration 
+          DNS_ZONE_NAME: 'MYAPP-COM'
           GCP_PROJECT: 'knawat-app'
           GCP_JSON_KEY: ${{ secrets.GCP_JSON_KEY }}
-          SERVICES: "{api,products}"
+          #DOCKER CONFIGURATION
+          DOCKER_REGISTRY: 'gcr.io'
+          IMAGE_REPO_NAME: 'api'
           IMAGE_TAGS: "$GITHUB_SHA" 
-          cluster_name: "cluster-dev"
-          cluster_location: "us-central1-c"
+          #K8S Configuration
+          CLUSTER_NAME: "cluster-dev"
+          CLUSTER_LOCATION: "us-central1-c"
           CONTAINER_NAME: "app"
-          MOLECULER_APM_ENABLE: "0"
+          #GitHub Configuration
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
@@ -81,3 +92,35 @@ If you need to change the transporter use by the application:
  with: 
      TRANSPORTER: nats://nats:4222
 ```
+
+## Configuration
+
+| Variable 	| Description 	| Default value 	| Required 	|
+|---	|---	|---	|---	|
+| DOCKER_FILE 	| The location of your docker file to build the image, usually it's in the root directory of your application. 	| Dockerfile 	| NO 	|
+| DOCKER_REGISTRY 	| Docker image registry. where you want to save your build image. Defaults to GCP container registry 	| gcr.io 	| YES 	|
+| IMAGE_REPO_NAME 	| Image repo name in the image registery 	| myImageRepo 	| YES 	|
+| IMAGE_TAGS 	| Your build image tag. it's good to use $GITHUB_SHA 	| latest 	| NO 	|
+| CONTAINER_NAME 	| The container name that should deploy to the k8s cluster 	| myApp 	| NO 	|
+| TRANSPORTER 	| he transporter for the moleculer application 	| tcp 	| NO 	|
+| SERVICES 	| The name of the moleculer services you want to deploy, it  should between {} 	| '' 	| NO 	|
+| SERVICEDIR 	| The name of the moleculer services directory 	| build/services 	| NO 	|
+| MONGO_URI 	| The DB connection string 	| '' 	| YES 	|
+| BASE_URL 	| Your app base URL 	| x.example.com 	| YES 	|
+| CRON_ENABLED 	| If you have a cron in your application and you want to add it to moleculer helm package, you can enable it here and add it's configuration in HELM_SET. 	| false 	| NO 	|
+| MOLECULER_APM_ENABLE 	| The moleculer laboratory for your application. 	| 0 	| NO 	|
+| AGENT_TOKEN 	| The moleculer lab agent token for the moleculer laboratory. 	| someSecret 	| NO 	|
+| AGENT_APIKEY 	| The moleculer lab API key for the moleculer laboratory 	| someSecret 	| NO 	|
+| HELM_SET 	| Additional helm values to set environment variables (corresponds to `helm upgrade --set`). Should have format environment.env.VAR1=VAL1,environment.env.VAR2=VAL2. 	|  	| NO 	|
+
+## Default environment variables of moleculer helm package
+
+| Variable 	| Default Value 	|
+|---	|---	|
+| NODE_ENV 	| development 	|
+| PORT 	| 3000 	|
+| LOGGER 	| Laboratory 	|
+| LOGLEVEL 	| info 	|
+| CACHER 	| memory 	|
+
+For reference you can visit the helm package repo from [here](https://github.com/Knawat/helm-charts).
