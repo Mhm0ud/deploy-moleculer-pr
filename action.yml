@@ -16,12 +16,16 @@ inputs:
     description: "Image tag"
   IMAGE_REPO_NAME:
     required: false
-    default: myImageRepo
-    description: "Image repo name in the image registery"
+    default: exampleRepo
+    description: >
+      Image repository name in the container registery. P.S. in Google cloud image registary, the image repository name will be like: 
+      gcr.io/[PROJECT_ID]/[IMAGE_REPO_NAME], so in this variable we define the last section of the full image name.
   CONTAINER_NAME:
     required: false
-    default: myApp
-    description: "The container name that should deploy to the k8s cluster"
+    default: myAppContainer
+    description: >
+      The container name that should deploy to the k8s cluster. In the K8S cluster the POD will start a container, 
+      we define here the name of container that will start in the deployment.
   CRON_ENABLED:
     required: false
     default: false
@@ -61,31 +65,34 @@ inputs:
   HELM_SET:
     description: Additional helm values to set environment variables (corresponds to `helm upgrade --set`). Should have format environment.env.VAR1=VAL1,environment.env.VAR2=VAL2.
     required: false
+    default: environment.env.LOGGER=Laboratory
   BASE_URL:
-    description: "Your base URL for your deployment"
-    default: 'x.example.com'
+    description: >
+      Let's assume that your app gateway URL is 'api.example.com', and you want to create a PR deployment using this action, so the deployment PR URL will be 'pr-[PR_NUMBER].[BASE_URL]' 
+      (pr-1.api.example.com) 
+    default: 'api.example.com'
     required: true
     type: string
 
   GCP_PROJECT:
-    description: 'GCP Project Name'
+    description: 'GCP Project ID'
     required: true
-    default: 'knawat'
+    default: 'example-project'
   GCP_JSON_KEY:
     description: 'GCP JSON KEY'
     required: true
   CLUSTER_NAME: 
-    description: 'GCP cluster Name'
+    description: 'K8S cluster Name'
     required: true
-    default: 'knawat'
+    default: 'example-cluster'
   CLUSTER_LOCATION:
-    description: 'GCP cluster location'
+    description: 'K8S cluster location'
     required: true
-    default: 'knawat'
+    default: 'us-central-01'
   DNS_ZONE_NAME:
-    description: "Your DNS Zone Name in GCP Cloud DNS"
-    default: knawat-com
-    required: false
+    description: "Your DNS Zone Name in GCP Cloud DNS,It's the cloud DNS Zone name not the DNS name (P.S. DNS name is example.com)"
+    default: example-com
+    required: true
   GITHUB_TOKEN:
     description: "Your Github token"
     required: true

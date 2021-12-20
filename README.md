@@ -43,11 +43,11 @@ jobs:
           AGENT_APIKEY: ${{ secrets.AGENT_APIKEY }}
           TRANSPORTER: tcp
           MONGO_URI: '${{ secrets.MONGO_URI }}' //should include it between ''
-          BASE_URL: api.example.com
+          BASE_URL: api.example.com //The gateway URL of your app, the deployment PR URL will be 'pr-[PR_NUMBER].[BASE_URL]'
           HELM_SET: ${{ secrets.HELM_SET }} //To include any other application env var (environment.env.VAR1=VAL1)
           # GCP Configuration 
-          DNS_ZONE_NAME: 'MYAPP-COM'
-          GCP_PROJECT: 'knawat-app'
+          DNS_ZONE_NAME: 'EXAMPLE-COM' //It's the cloud DNS Zone name not the DNS name (P.S. DNS name is example.com)
+          GCP_PROJECT: 'example-project'
           GCP_JSON_KEY: ${{ secrets.GCP_JSON_KEY }}
           #DOCKER CONFIGURATION
           DOCKER_REGISTRY: 'gcr.io'
@@ -106,12 +106,18 @@ If you need to change the transporter use by the application:
 | SERVICES 	| The name of the moleculer services you want to deploy, it  should between {} 	| '' 	| NO 	|
 | SERVICEDIR 	| The name of the moleculer services directory 	| build/services 	| NO 	|
 | MONGO_URI 	| The DB connection string 	| '' 	| YES 	|
-| BASE_URL 	| Your app base URL 	| x.example.com 	| YES 	|
+| BASE_URL 	| Your app base URL 	| api.example.com,Let's assume that your app gateway URL is 'api.example.com', and you want to create a PR deployment using this action, so the deployment PR URL will be 'pr-[PR_NUMBER].[BASE_URL]'  (pr-1.api.example.com)  	| YES 	|
 | CRON_ENABLED 	| If you have a cron in your application and you want to add it to moleculer helm package, you can enable it here and add it's configuration in HELM_SET. 	| false 	| NO 	|
 | MOLECULER_APM_ENABLE 	| The moleculer laboratory for your application. 	| 0 	| NO 	|
 | AGENT_TOKEN 	| The moleculer lab agent token for the moleculer laboratory. 	| someSecret 	| NO 	|
 | AGENT_APIKEY 	| The moleculer lab API key for the moleculer laboratory 	| someSecret 	| NO 	|
 | HELM_SET 	| Additional helm values to set environment variables (corresponds to `helm upgrade --set`). Should have format environment.env.VAR1=VAL1,environment.env.VAR2=VAL2. 	|  	| NO 	|
+| GCP_PROJECT 	| The ID of your project on Google Cloud. 	| example-project 	| YES 	|
+| PORTGCP_JSON_KEY 	| The auth token to authenticate with your GCloud Project. 	|  	| YES 	|
+| CLUSTER_NAME 	| The K8S cluster name. 	| example-cluster 	| YES 	|
+| CLUSTER_LOCATION 	| The K8S cluster location on GCP. 	| us-central-01 	| YES 	|
+| DNS_ZONE_NAME 	| Your DNS Zone Name in GCP Cloud DNS,It's the cloud DNS Zone name not the DNS name (P.S. DNS name is example.com)" 	| xample-com 	| YES 	|
+| GITHUB_TOKEN 	| Your GitHub token, you can get it from this GitHub environment variable ${{ secrets.GITHUB_TOKEN }} by default. 	|  	| YES 	|
 
 ## Default environment variables of moleculer helm package
 
