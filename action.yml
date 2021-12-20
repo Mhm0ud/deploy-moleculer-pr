@@ -49,6 +49,11 @@ inputs:
     description: 'The name of the moleculer services you want to deploy, it  should between {}'
     required: false
     default: '{API, test}'
+  SERVICEDIR:
+    type: string
+    description: 'The name of the moleculer service directory'
+    required: false
+    default: 'build/services'
   HELM_SET:
     description: Additional helm values to set environment variables (corresponds to `helm upgrade --set`). Should have format environment.env.VAR1=VAL1,environment.env.VAR2=VAL2.
     required: false
@@ -160,6 +165,7 @@ runs:
           --set environment.secret.AGENT_TOKEN=${{ inputs.AGENT_TOKEN }} \
           --set environment.env.BASE_URL="pr-${{github.event.number}}.${{ inputs.BASE_URL }}" \
           --set environment.env.NAMESPACE="$name" \
+          --set environment.env.SERVICEDIR=${{ inputs.SERVICEDIR	}}  \
           --set environment.env.TRANSPORTER=${{ inputs.TRANSPORTER	}} \
           --set environment.env.MOLECULER_APM_ENABLE=${{ inputs.MOLECULER_APM_ENABLE	}} \
           --set "${{ inputs.HELM_SET	}}" \
