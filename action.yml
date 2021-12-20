@@ -165,7 +165,7 @@ runs:
           --set image.repository="${{ inputs.docker-registry }}/${{ inputs.GCP_PROJECT }}/${{ inputs.IMAGE_REPO_NAME }}" \
           --set image.tag="${{ inputs.IMAGE_TAGS	}}" \
           --set cron.enabled=${{ inputs.CRON_ENABLED	}} \
-          --set-string environment.secret.MONGO_URI=${{ inputs.MONGO_URI }} \
+          --set-string environment.secret.MONGO_URI='${{ inputs.MONGO_URI }}' \
           --set environment.secret.AGENT_APIKEY=${{ inputs.AGENT_APIKEY }} \
           --set environment.secret.AGENT_TOKEN=${{ inputs.AGENT_TOKEN }} \
           --set environment.env.BASE_URL="pr-${{github.event.number}}.${{ inputs.BASE_URL }}" \
