@@ -59,7 +59,6 @@ inputs:
     description: 'The connection string for your DB'
     required: false
     default: ''
-  MONGO_URI:
   HELM_SET:
     description: Additional helm values to set environment variables (corresponds to `helm upgrade --set`). Should have format environment.env.VAR1=VAL1,environment.env.VAR2=VAL2.
     required: false
