@@ -107,7 +107,7 @@ If you need to change the transporter use by the application:
 | SERVICES 	| The name of the moleculer services you want to deploy, it  should between {} 	| '' 	| NO 	|
 | SERVICEDIR 	| The name of the moleculer services directory 	| build/services 	| NO 	|
 | MONGO_URI 	| The DB connection string 	| '' 	| YES 	|
-| BASE_URL 	| Your app base URL 	| api.example.com,Let's assume that your app gateway URL is 'api.example.com', and you want to create a PR deployment using this action, so the deployment PR URL will be 'pr-[PR_NUMBER].[BASE_URL]'  (pr-1.api.example.com)  	| YES 	|
+| BASE_URL 	| Your app base URL,Let's assume that your app gateway URL is 'api.example.com', and you want to create a PR deployment using this action, so the deployment PR URL will be 'pr-[PR_NUMBER].[BASE_URL]'  (pr-1.api.example.com) | api.example.com	| YES 	|
 | CRON_ENABLED 	| If you have a cron in your application and you want to add it to moleculer helm package, you can enable it here and add it's configuration in HELM_SET. 	| false 	| NO 	|
 | MOLECULER_APM_ENABLE 	| The moleculer laboratory for your application. 	| 0 	| NO 	|
 | AGENT_TOKEN 	| The moleculer lab agent token for the moleculer laboratory. 	| someSecret 	| NO 	|
