@@ -6,6 +6,10 @@ inputs:
     required: false
     default: $(echo $GITHUB_REPOSITORY | tr '[:upper:]' '[:lower:]' | cut -f2 -d/)-${{github.event.number}}-pr
     description: "Helm release name for the deployment"
+  HELM_RELEASE_NAMESPACE:
+    required: false
+    default: $(echo $GITHUB_REPOSITORY | tr '[:upper:]' '[:lower:]' | cut -f2 -d/)-${{github.event.number}}-pr
+    description: "Helm release name for the deployment"
   DOCKER_FILE:
     required: false
     default: "Dockerfile"
@@ -163,7 +167,7 @@ runs:
         if ! [[ "${{ inputs.SERVICES }}" =~ "api"  || "${{ inputs.SERVICES }}" =~ "API" ]];then
           echo "You don't have API service, so you don't need to create a DNS."
         else
-          if gcloud dns record-sets create pr-${{github.event.number}}.${{ inputs.BASE_URL }}. --rrdatas=${{steps.create-ip-address.outputs.STATIC_IP_ADDRESS}} --type=A --ttl=60 --zone=${{ inputs.DNS_ZONE_NAME }}
+          if gcloud dns record-sets create ${{ inputs.HELM_RELEASE_NAME }}.${{ inputs.BASE_URL }}. --rrdatas=${{steps.create-ip-address.outputs.STATIC_IP_ADDRESS}} --type=A --ttl=60 --zone=${{ inputs.DNS_ZONE_NAME }}
           then
             echo "The DNS created"
           else
@@ -178,23 +182,23 @@ runs:
         helm repo add helm-charts https://knawat.github.io/helm-charts
         OUTPUT=$(helm upgrade ${{ inputs.HELM_RELEASE_NAME }} helm-charts/moleculer \
           --install \
-          -n "${{ inputs.HELM_RELEASE_NAME }}" \
+          -n "${{ inputs.HELM_RELEASE_NAMESPACE }}" \
           --create-namespace \
           --set container.name="${{ inputs.CONTAINER_NAME }}" \
-          --set ingress.annotations."kubernetes\.io/ingress\.global-static-ip-name"="${{ inputs.HELM_RELEASE_NAME }}"  --set container.services="{api,auth,categories,config,currencies,files,images,importer,oms,parser,products,suppliers,translator,warehouse,weight}" \
+          --set ingress.annotations."kubernetes\.io/ingress\.global-static-ip-name"="${{ inputs.HELM_RELEASE_NAMESPACE }}"  --set container.services="${{ inputs.SERVICES }}" \
           --set image.repository="${{ inputs.DOCKER_REGISTRY }}/${{ inputs.GCP_PROJECT }}/${{ inputs.IMAGE_REPO_NAME }}" \
           --set image.tag="${{ inputs.IMAGE_TAGS	}}" \
           --set cron.enabled=${{ inputs.CRON_ENABLED	}} \
           --set-string environment.secret.MONGO_URI='${{ inputs.MONGO_URI }}' \
           --set environment.secret.AGENT_APIKEY=${{ inputs.AGENT_APIKEY }} \
           --set environment.secret.AGENT_TOKEN=${{ inputs.AGENT_TOKEN }} \
-          --set environment.env.BASE_URL="pr-${{github.event.number}}.${{ inputs.BASE_URL }}" \
+          --set environment.env.BASE_URL="${{ inputs.HELM_RELEASE_NAME }}.${{ inputs.BASE_URL }}" \
           --set environment.env.SERVICEDIR=${{ inputs.SERVICEDIR }} \
-          --set environment.env.NAMESPACE="${{ inputs.HELM_RELEASE_NAME }}" \
+          --set environment.env.NAMESPACE="${{ inputs.HELM_RELEASE_NAMESPACE }}" \
           --set environment.env.TRANSPORTER=${{ inputs.TRANSPORTER	}} \
           --set environment.env.MOLECULER_APM_ENABLE=${{ inputs.MOLECULER_APM_ENABLE	}} \
           --set "${{ inputs.HELM_SET	}}" \
-          --set ingress.hosts[0].host="pr-${{github.event.number}}.${{ inputs.BASE_URL }}" \
+          --set ingress.hosts[0].host="${{ inputs.HELM_RELEASE_NAME }}.${{ inputs.BASE_URL }}" \
           --set ingress.hosts[0].paths[0].path="/*" \
           --set ingress.hosts[0].paths[0].backend.serviceName="api" \
           --set ingress.hosts[0].paths[0].backend.servicePort="80")
@@ -208,7 +212,7 @@ runs:
       run: |
         if [[ ${{ inputs.MOLECULER_APM_ENABLE }} == 1 &&  "${{ inputs.SERVICES }}" =~ "api" ]];then
           gcloud container clusters get-credentials ${{ inputs.CLUSTER_NAME }} --zone ${{ inputs.CLUSTER_LOCATION }} --project ${{ inputs.GCP_PROJECT }}
-          echo "::set-output name=LAB_IP_ADDRESS::$(kubectl get service --field-selector="metadata.name=lab" -n ${{ inputs.HELM_RELEASE_NAME }}  --output jsonpath="{.items[0].status.loadBalancer.ingress[0].ip}")"
+          echo "::set-output name=LAB_IP_ADDRESS::$(kubectl get service --field-selector="metadata.name=lab" -n ${{ inputs.HELM_RELEASE_NAMESPACE }}  --output jsonpath="{.items[0].status.loadBalancer.ingress[0].ip}")"
         else
           echo "::set-output name=LAB_IP_ADDRESS::echo("You dont have Lab service enabled, or this is a dependecy deploy so, to get the lab IP go the the main PR.")"
         fi
