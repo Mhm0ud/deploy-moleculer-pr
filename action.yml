@@ -165,7 +165,7 @@ runs:
         if ! [[ "${{ inputs.SERVICES }}" =~ "api"  || "${{ inputs.SERVICES }}" =~ "API" ]];then
           echo "You don't have API service, so you don't need to create a DNS."
         else
-          if gcloud dns record-sets create ${{ inputs.HELM_RELEASE_NAME }}.${{ inputs.BASE_URL }}. --rrdatas=${{steps.create-ip-address.outputs.STATIC_IP_ADDRESS}} --type=A --ttl=60 --zone=${{ inputs.DNS_ZONE_NAME }}
+          if gcloud dns record-sets create ${{ inputs.HELM_RELEASE_NAMESPACE }}.${{ inputs.BASE_URL }}. --rrdatas=${{steps.create-ip-address.outputs.STATIC_IP_ADDRESS}} --type=A --ttl=60 --zone=${{ inputs.DNS_ZONE_NAME }}
           then
             echo "The DNS created"
           else
@@ -190,13 +190,13 @@ runs:
           --set-string environment.secret.MONGO_URI='${{ inputs.MONGO_URI }}' \
           --set environment.secret.AGENT_APIKEY=${{ inputs.AGENT_APIKEY }} \
           --set environment.secret.AGENT_TOKEN=${{ inputs.AGENT_TOKEN }} \
-          --set environment.env.BASE_URL="https:\/\/${{ inputs.HELM_RELEASE_NAME }}.${{ inputs.BASE_URL }}" \
+          --set environment.env.BASE_URL="https:\/\/${{ inputs.HELM_RELEASE_NAMESPACE }}.${{ inputs.BASE_URL }}" \
           --set environment.env.SERVICEDIR=${{ inputs.SERVICEDIR }} \
           --set environment.env.NAMESPACE="${{ inputs.HELM_RELEASE_NAMESPACE }}" \
           --set environment.env.TRANSPORTER=${{ inputs.TRANSPORTER	}} \
           --set environment.env.MOLECULER_APM_ENABLE=${{ inputs.MOLECULER_APM_ENABLE	}} \
           --set "${{ inputs.HELM_SET	}}" \
-          --set ingress.hosts[0].host="${{ inputs.HELM_RELEASE_NAME }}.${{ inputs.BASE_URL }}" \
+          --set ingress.hosts[0].host="${{ inputs.HELM_RELEASE_NAMESPACE }}.${{ inputs.BASE_URL }}" \
           --set ingress.hosts[0].paths[0].path="/*" \
           --set ingress.hosts[0].paths[0].backend.serviceName="api" \
           --set ingress.hosts[0].paths[0].backend.servicePort="80")
