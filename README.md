@@ -98,6 +98,7 @@ If you need to change the transporter use by the application:
 | Variable 	| Description 	| Default value 	| Required 	|
 |---	|---	|---	|---	|
 | HELM_RELEASE_NAME 	| The helm release name to deploy. 	| [REPO_NAME]-[PR_Number]-pr  	| NO 	|   
+| HELM_RELEASE_NAMESPACE 	| The namespace of helm release, in which k8s namespace. It will create a new one if not exists. 	| [REPO_NAME]-[PR_Number]-pr  	| NO 	| 
 | DOCKER_FILE 	| The location of your docker file to build the image, usually it's in the root directory of your application. 	| Dockerfile 	| NO 	|
 | DOCKER_REGISTRY 	| Docker image registry. where you want to save your build image. Defaults to GCP container registry 	| gcr.io 	| YES 	|
 | IMAGE_REPO_NAME 	| Image repo name in the image registery 	| myImageRepo 	| YES 	|
