@@ -5,7 +5,6 @@
 ### 🚀 Features
 
 - Add new environment variables as input
-- Add production docker
 
 ### 🐛 Fixes
 
