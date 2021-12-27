@@ -152,12 +152,12 @@ runs:
         if ! [[ "${{ inputs.SERVICES }}" =~ "api"  || "${{ inputs.SERVICES }}" =~ "API" ]];then
           echo "You don't have API service, so you don't need to create an IP address."
         else
-          if [[ -z $(gcloud compute addresses list --format json --filter "name=${{ inputs.HELM_RELEASE_NAME }}" --format="get(address)") ]];
+          if [[ -z $(gcloud compute addresses list --format json --filter "name=${{ inputs.HELM_RELEASE_NAMESPACE }}" --format="get(address)") ]];
           then
-            gcloud compute addresses create ${{ inputs.HELM_RELEASE_NAME }} --global --ip-version IPV4
-            echo "::set-output name=STATIC_IP_ADDRESS::$(gcloud compute addresses list --format json --filter "name=${{ inputs.HELM_RELEASE_NAME }}" --format="get(address)")"
+            gcloud compute addresses create ${{ inputs.HELM_RELEASE_NAMESPACE }} --global --ip-version IPV4
+            echo "::set-output name=STATIC_IP_ADDRESS::$(gcloud compute addresses list --format json --filter "name=${{ inputs.HELM_RELEASE_NAMESPACE }}" --format="get(address)")"
           else
-            echo "::set-output name=STATIC_IP_ADDRESS::$(gcloud compute addresses list --format json --filter "name=${{ inputs.HELM_RELEASE_NAME }}" --format="get(address)")"
+            echo "::set-output name=STATIC_IP_ADDRESS::$(gcloud compute addresses list --format json --filter "name=${{ inputs.HELM_RELEASE_NAMESPACE }}" --format="get(address)")"
           fi
         fi
     - id: create-dns
