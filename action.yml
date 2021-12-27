@@ -38,6 +38,14 @@ inputs:
     required: false
     default: false
     description: "The moleculer cron for helm chart."
+  LABORATORY_ENABLED:
+    required: true
+    default: true
+    description: "To install the lab service for moleculer."
+  INGRESS_ENABLED:
+    required: false
+    default: true
+    description: "To install the API service and the ingress, if you have an api gateway in your app you need to enable it"
   MOLECULER_APM_ENABLE:
     required: false
     default: 1
@@ -180,6 +188,8 @@ runs:
           --set image.repository="${{ inputs.DOCKER_REGISTRY }}/${{ inputs.GCP_PROJECT }}/${{ inputs.IMAGE_REPO_NAME }}" \
           --set image.tag="${{ inputs.IMAGE_TAGS	}}" \
           --set cron.enabled=${{ inputs.CRON_ENABLED	}} \
+          --set laboratory.enabled=${{ inputs.LABORATORY_ENABLED	}} \
+          --set ingress.enabled=false =${{ inputs.INGRESS_ENABLED	}} \
           --set-string environment.secret.MONGO_URI='${{ inputs.MONGO_URI }}' \
           --set environment.secret.AGENT_APIKEY=${{ inputs.AGENT_APIKEY }} \
           --set environment.secret.AGENT_TOKEN=${{ inputs.AGENT_TOKEN }} \

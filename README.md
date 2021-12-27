@@ -110,6 +110,8 @@ If you need to change the transporter use by the application:
 | MONGO_URI 	| The DB connection string 	| '' 	| YES 	|
 | BASE_URL 	| Your app base URL,Let's assume that your app gateway URL is 'api.example.com', and you want to create a PR deployment using this action, so the deployment PR URL will be 'pr-[PR_NUMBER].[BASE_URL]'  (pr-1.api.example.com) | api.example.com	| YES 	|
 | CRON_ENABLED 	| If you have a cron in your application and you want to add it to moleculer helm package, you can enable it here and add it's configuration in HELM_SET. 	| false 	| NO 	|
+| LABORATORY_ENABLED 	| If you don't have the lab service installed in your app, you should disable this option to not installing the lab service in k8s. 	| true 	| NO 	|
+| INGRESS_ENABLED 	| If you don't have the api gateway service in your app, you should disable this to aviod install the api service in k8s and avoid install the ingress. 	|  true	| NO 	|
 | MOLECULER_APM_ENABLE 	| The moleculer laboratory for your application. 	| 0 	| NO 	|
 | AGENT_TOKEN 	| The moleculer lab agent token for the moleculer laboratory. 	| someSecret 	| NO 	|
 | AGENT_APIKEY 	| The moleculer lab API key for the moleculer laboratory 	| someSecret 	| NO 	|
