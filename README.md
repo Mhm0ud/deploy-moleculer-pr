@@ -126,9 +126,10 @@ If you need to change the transporter use by the application:
 ## Output Variables 
 
 | Variable 	| Description 	| Value 	|
-|---	|---	|---	|---	|
-| HELM_NOTE 	| The helm release notes. 	| Release Name, Last Deployed, Namespace, Status, Revision, Test Suite, Notes  	|  
-| LAB_IP_ADDRESS 	| The namespace of helm release, in which k8s namespace. It will create a new one if not exists. 	| IP Address  	|
+|---	|---	|---	|
+| HELM_NOTE 	| The helm release notes. 	| Release Name, Last Deployed, Namespace, Status, Revision, Test Suite, Notes 	|
+| LAB_IP_ADDRESS 	| The namespace of helm release, in which k8s namespace. It will create a new one if not exists. 	| IP Address 	|
+
 ## Default environment variables of moleculer helm package
 
 | Variable 	| Default Value 	|
