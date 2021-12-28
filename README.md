@@ -93,7 +93,7 @@ If you need to change the transporter use by the application:
      TRANSPORTER: nats://nats:4222
 ```
 
-## Configuration
+## Configuration 
 
 | Variable 	| Description 	| Default value 	| Required 	|
 |---	|---	|---	|---	|
@@ -123,6 +123,12 @@ If you need to change the transporter use by the application:
 | DNS_ZONE_NAME 	| Your DNS Zone Name in GCP Cloud DNS,It's the cloud DNS Zone name not the DNS name (P.S. DNS name is example.com)" 	| xample-com 	| YES 	|
 | GITHUB_TOKEN 	| Your GitHub token, you can get it from this GitHub environment variable ${{ secrets.GITHUB_TOKEN }} by default. 	|  	| YES 	|
 
+## Output Variables 
+
+| Variable 	| Description 	| Value 	|
+|---	|---	|---	|---	|
+| HELM_NOTE 	| The helm release notes. 	| Release Name, Last Deployed, Namespace, Status, Revision, Test Suite, Notes  	|  
+| LAB_IP_ADDRESS 	| The namespace of helm release, in which k8s namespace. It will create a new one if not exists. 	| IP Address  	|
 ## Default environment variables of moleculer helm package
 
 | Variable 	| Default Value 	|

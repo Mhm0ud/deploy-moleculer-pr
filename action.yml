@@ -112,6 +112,13 @@ inputs:
   GITHUB_TOKEN:
     description: "Your Github token"
     required: true
+outputs:
+  LAB_IP_ADDRESS:
+    description: "The IP address of the laboratory service that created in K8S if you enable it."
+    value: ${{steps.get-lab-ip-address.outputs.LAB_IP_ADDRESS}}
+  HELM_OUTPUT:
+    description: "The helm release note"
+    value: ${{steps.deploy-helm.outputs.helm-note}}
 
 runs:
   using: "composite"
