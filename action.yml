@@ -230,7 +230,6 @@ runs:
         GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
       with:
         message: |
-          ${{steps.deploy-helm.outputs.helm-note}}
           LAB_IP_ADDRESS: ${{steps.get-lab-ip-address.outputs.LAB_IP_ADDRESS}}
         allow-repeats: true
 branding:
