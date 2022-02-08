@@ -232,7 +232,7 @@ runs:
         message: |
           ${{steps.deploy-helm.outputs.helm-note}}
           LAB_IP_ADDRESS: ${{steps.get-lab-ip-address.outputs.LAB_IP_ADDRESS}}
-        allow-repeats: flase
+        allow-repeats: false
 branding:
   icon: 'anchor'  
   color: 'orange'
