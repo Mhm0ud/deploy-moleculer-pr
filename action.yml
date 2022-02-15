@@ -225,14 +225,6 @@ runs:
           echo "::set-output name=LAB_IP_ADDRESS::echo("You dont have Lab service enabled, or this is a dependecy deploy so, to get the lab IP go the the main PR.")"
         fi
 
-    - uses: mshick/add-pr-comment@v1
-      env:
-        GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
-      with:
-        message: |
-          ${{steps.deploy-helm.outputs.helm-note}}
-          LAB_IP_ADDRESS: ${{steps.get-lab-ip-address.outputs.LAB_IP_ADDRESS}}
-        allow-repeats: false
 branding:
   icon: 'anchor'  
   color: 'orange'
