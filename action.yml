@@ -46,6 +46,11 @@ inputs:
     required: false
     default: false
     description: "To install the graphql service if you have implement it"
+  APOLLO_GRAPH_REF:
+    type: string
+    required: false
+    default: API@current
+    description: "The port of the graphql service if you have implement it"
   GRAPHQL_SERVICE_PORT:
     type: string
     required: false
@@ -214,6 +219,7 @@ runs:
           --set environment.env.BASE_URL="https:\/\/${{ inputs.HELM_RELEASE_NAMESPACE }}.${{ inputs.BASE_URL }}" \
           --set environment.env.SERVICEDIR=${{ inputs.SERVICEDIR }} \
           --set environment.env.NAMESPACE="${{ inputs.HELM_RELEASE_NAMESPACE }}" \
+          --set environment.env.APOLLO_GRAPH_REF="${{ inputs.APOLLO_GRAPH_REF }}" \
           --set environment.env.TRANSPORTER=${{ inputs.TRANSPORTER	}} \
           --set environment.env.MOLECULER_APM_ENABLE=${{ inputs.MOLECULER_APM_ENABLE	}} \
           --set "${{ inputs.HELM_SET	}}" \
