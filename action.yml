@@ -42,6 +42,15 @@ inputs:
     required: true
     default: true
     description: "To install the lab service for moleculer."
+  GRAPHQL_ENABLED:
+    required: false
+    default: false
+    description: "To install the graphql service if you have implement it"
+  GRAPHQL_SERVICE_PORT:
+    type: string
+    required: false
+    default: 8000
+    description: "The port of the graphql service if you have implement it"
   INGRESS_ENABLED:
     required: false
     default: true
@@ -197,6 +206,8 @@ runs:
           --set cron.enabled=${{ inputs.CRON_ENABLED	}} \
           --set laboratory.enabled=${{ inputs.LABORATORY_ENABLED	}} \
           --set ingress.enabled=${{ inputs.INGRESS_ENABLED	}} \
+          --set graphql.enabled=${{ inputs.GRAPHQL_ENABLED	}} \
+          --set graphql.targetport=${{ inputs.GRAPHQL_SERVICE_PORT	}} \
           --set-string environment.secret.MONGO_URI='${{ inputs.MONGO_URI }}' \
           --set environment.secret.AGENT_APIKEY=${{ inputs.AGENT_APIKEY }} \
           --set environment.secret.AGENT_TOKEN=${{ inputs.AGENT_TOKEN }} \
